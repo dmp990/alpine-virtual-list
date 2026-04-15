@@ -12,11 +12,14 @@ export function normalizeVirtualListOptions(value = {}) {
     items: Array.isArray(options.items) ? options.items : [],
     itemHeight,
     overscan: toNonNegativeInteger(options.overscan, DEFAULT_OVERSCAN),
-    as: typeof options.as === 'string' && options.as.length > 0 ? options.as : 'item',
+    as:
+      typeof options.as === "string" && options.as.length > 0
+        ? options.as
+        : "item",
     indexAs:
-      typeof options.indexAs === 'string' && options.indexAs.length > 0
+      typeof options.indexAs === "string" && options.indexAs.length > 0
         ? options.indexAs
-        : 'index',
+        : "index",
     key: options.key,
   };
 }

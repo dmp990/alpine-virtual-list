@@ -9,8 +9,8 @@ npm install alpine-virtual-list
 ```
 
 ```js
-import Alpine from 'alpinejs';
-import virtualList from 'alpine-virtual-list';
+import Alpine from "alpinejs";
+import virtualList from "alpine-virtual-list";
 
 Alpine.plugin(virtualList);
 Alpine.start();
@@ -47,15 +47,15 @@ The template root is reused for each visible item.
 
 ## Options
 
-| Option | Type | Default | Description |
-| --- | --- | --- | --- |
-| `items` | `array` | `[]` | Items to render. Passing an array directly also works. |
-| `itemHeight` | `number` | `40` | Fixed row height in pixels. |
-| `estimateSize` | `number` | `40` | Alias for `itemHeight`. |
-| `overscan` | `number` | `5` | Extra rows to render before and after the viewport. |
-| `as` | `string` | `item` | Variable name for the current item in the template scope. |
-| `indexAs` | `string` | `index` | Variable name for the current item index. |
-| `key` | `string | function` | `index` | Property name or function used to keep row nodes stable. |
+| Option         | Type     | Default | Description                                               |
+| -------------- | -------- | ------- | --------------------------------------------------------- |
+| `items`        | `array`  | `[]`    | Items to render. Passing an array directly also works.    |
+| `itemHeight`   | `number` | `40`    | Fixed row height in pixels.                               |
+| `estimateSize` | `number` | `40`    | Alias for `itemHeight`.                                   |
+| `overscan`     | `number` | `5`     | Extra rows to render before and after the viewport.       |
+| `as`           | `string` | `item`  | Variable name for the current item in the template scope. |
+| `indexAs`      | `string` | `index` | Variable name for the current item index.                 |
+| `key`          | `string` | `index` | Property name or function used to keep row nodes stable.  |
 
 Every row also receives a `virtual` object with `index`, `odd`, and `even`.
 

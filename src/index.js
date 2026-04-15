@@ -1,18 +1,18 @@
-import { getVirtualRange, normalizeVirtualListOptions } from './core.js';
+import { getVirtualRange, normalizeVirtualListOptions } from "./core.js";
 
 export default function virtualList(Alpine) {
   Alpine.directive(
-    'virtual-list',
+    "virtual-list",
     (el, { expression }, { cleanup, effect, evaluateLater }) => {
-      const evaluate = evaluateLater(expression || '{}');
-      const template = el.querySelector('template');
+      const evaluate = evaluateLater(expression || "{}");
+      const template = el.querySelector("template");
 
       if (!template) {
-        warn('x-virtual-list requires a child <template> to render each row.');
+        warn("x-virtual-list requires a child <template> to render each row.");
         return;
       }
 
-      const mount = document.createElement('div');
+      const mount = document.createElement("div");
       const state = {
         options: normalizeVirtualListOptions(),
         range: getVirtualRange({
@@ -38,10 +38,10 @@ export default function virtualList(Alpine) {
       };
 
       const onScroll = () => requestRender();
-      el.addEventListener('scroll', onScroll, { passive: true });
+      el.addEventListener("scroll", onScroll, { passive: true });
 
       const observer =
-        typeof ResizeObserver === 'function'
+        typeof ResizeObserver === "function"
           ? new ResizeObserver(requestRender)
           : null;
 
@@ -56,7 +56,7 @@ export default function virtualList(Alpine) {
 
       cleanup(() => {
         state.destroyed = true;
-        el.removeEventListener('scroll', onScroll);
+        el.removeEventListener("scroll", onScroll);
         observer?.disconnect();
 
         if (state.frame !== null) cancelAnimationFrame(state.frame);
@@ -70,14 +70,14 @@ export default function virtualList(Alpine) {
         template.hidden = false;
       });
     },
-  ).before('for');
+  ).before("for");
 }
 
-if (typeof document !== 'undefined') {
+if (typeof document !== "undefined") {
   if (window.Alpine) {
     window.Alpine.plugin(virtualList);
   } else {
-    document.addEventListener('alpine:init', () => {
+    document.addEventListener("alpine:init", () => {
       window.Alpine.plugin(virtualList);
     });
   }
@@ -87,18 +87,18 @@ export { getVirtualRange, normalizeVirtualListOptions };
 
 function prepareContainer(el, template, mount) {
   template.hidden = true;
-  mount.setAttribute('data-virtual-list-mount', '');
-  mount.style.position = 'relative';
-  mount.style.width = '100%';
-  mount.style.minHeight = '100%';
-  mount.style.height = '0px';
+  mount.setAttribute("data-virtual-list-mount", "");
+  mount.style.position = "relative";
+  mount.style.width = "100%";
+  mount.style.minHeight = "100%";
+  mount.style.height = "0px";
 
-  if (getComputedStyle(el).overflowY === 'visible') {
-    el.style.overflowY = 'auto';
+  if (getComputedStyle(el).overflowY === "visible") {
+    el.style.overflowY = "auto";
   }
 
-  if (getComputedStyle(el).position === 'static') {
-    el.style.position = 'relative';
+  if (getComputedStyle(el).position === "static") {
+    el.style.position = "relative";
   }
 
   el.append(mount);
@@ -151,7 +151,7 @@ function createRecord(Alpine, template, options, item, index) {
   const firstElement = fragment.firstElementChild;
 
   if (!firstElement) {
-    throw new Error('x-virtual-list template must contain one root element.');
+    throw new Error("x-virtual-list template must contain one root element.");
   }
 
   const node = firstElement;
@@ -159,13 +159,13 @@ function createRecord(Alpine, template, options, item, index) {
     ? Alpine.reactive(createScope(options, item, index))
     : createScope(options, item, index);
 
-  node.setAttribute('data-virtual-list-item', '');
-  node.style.position = 'absolute';
-  node.style.left = '0';
-  node.style.right = '0';
-  node.style.width = '100%';
-  node.style.boxSizing = 'border-box';
-  node.style.willChange = 'transform';
+  node.setAttribute("data-virtual-list-item", "");
+  node.style.position = "absolute";
+  node.style.left = "0";
+  node.style.right = "0";
+  node.style.width = "100%";
+  node.style.boxSizing = "border-box";
+  node.style.willChange = "transform";
 
   Alpine.addScopeToNode(node, scope);
   Alpine.initTree(node);
@@ -206,8 +206,12 @@ function createVirtualMeta(index) {
 }
 
 function getItemKey(options, item, index) {
-  if (typeof options.key === 'function') return options.key(item, index);
-  if (typeof options.key === 'string' && item && item[options.key] !== undefined) {
+  if (typeof options.key === "function") return options.key(item, index);
+  if (
+    typeof options.key === "string" &&
+    item &&
+    item[options.key] !== undefined
+  ) {
     return item[options.key];
   }
 
@@ -215,5 +219,6 @@ function getItemKey(options, item, index) {
 }
 
 function warn(message) {
-  if (typeof console !== 'undefined') console.warn(`[alpine-virtual-list] ${message}`);
+  if (typeof console !== "undefined")
+    console.warn(`[alpine-virtual-list] ${message}`);
 }

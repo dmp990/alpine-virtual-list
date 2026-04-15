@@ -1,4 +1,4 @@
-import type { PluginCallback } from 'alpinejs';
+import type { PluginCallback } from "alpinejs";
 
 export interface VirtualListOptions<T = unknown> {
   items: T[];
@@ -21,7 +21,8 @@ export interface VirtualRange {
 
 export declare function normalizeVirtualListOptions<T = unknown>(
   value?: VirtualListOptions<T> | T[],
-): Required<Omit<VirtualListOptions<T>, 'key'>> & Pick<VirtualListOptions<T>, 'key'>;
+): Required<Omit<VirtualListOptions<T>, "key">> &
+  Pick<VirtualListOptions<T>, "key">;
 
 export declare function getVirtualRange(input: {
   itemCount: number;
