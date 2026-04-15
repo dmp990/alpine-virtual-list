@@ -1,0 +1,40 @@
+{
+  "name": "alpine-virtual-list",
+  "version": "0.1.0",
+  "description": "An Alpine.js plugin for rendering large lists with a tiny virtualized window.",
+  "type": "module",
+  "main": "./src/index.js",
+  "module": "./src/index.js",
+  "types": "./src/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./src/index.d.ts",
+      "import": "./src/index.js"
+    },
+    "./core": {
+      "import": "./src/core.js"
+    },
+    "./cdn": "./dist/cdn.js"
+  },
+  "files": [
+    "src",
+    "dist",
+    "README.md",
+    "LICENSE"
+  ],
+  "scripts": {
+    "test": "node --test"
+  },
+  "keywords": [
+    "alpine",
+    "alpinejs",
+    "virtual-list",
+    "virtual-scroll",
+    "virtualized-list"
+  ],
+  "peerDependencies": {
+    "alpinejs": "^3.13.0"
+  },
+  "devDependencies": {},
+  "license": "MIT"
+}
