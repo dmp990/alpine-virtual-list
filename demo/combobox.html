@@ -273,14 +273,14 @@
             this.$refs.hiddenTextField.value = option.value;
             this.closeList(true);
           },
-          getFilteredOptions(query) {
+          getFilteredOptions(query, { resetScroll = true } = {}) {
             this.options = this.allOptions.filter((option) =>
               option.label.toLowerCase().includes(query.toLowerCase()),
             );
             this.syncActiveIndex();
 
             this.$nextTick(() => {
-              if (this.$refs.optionsViewport) {
+              if (this.$refs.optionsViewport && resetScroll) {
                 this.$refs.optionsViewport.scrollTop = 0;
               }
             });
@@ -309,9 +309,12 @@
           openList(fromKeyboard = false) {
             this.isOpen = true;
             this.openedWithKeyboard = fromKeyboard;
-            this.getFilteredOptions(this.$refs.searchField?.value || "");
+            this.getFilteredOptions(this.$refs.searchField?.value || "", {
+              resetScroll: false,
+            });
 
             this.$nextTick(() => {
+              this.ensureActiveOptionVisible();
               this.$refs.searchField.focus();
             });
           },
