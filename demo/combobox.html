@@ -1,0 +1,555 @@
+<!-- Adapted from: https://www.penguinui.com/components/combobox#comboboxWithSearch -->
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Alpine Virtual List Combobox Demo</title>
+    <style>
+      :root {
+        color-scheme: light;
+        font-family:
+          Inter,
+          ui-sans-serif,
+          system-ui,
+          -apple-system,
+          BlinkMacSystemFont,
+          "Segoe UI",
+          sans-serif;
+        line-height: 1.5;
+        color: #162033;
+        background: #f4f7fb;
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      [x-cloak] {
+        display: none !important;
+      }
+
+      body {
+        margin: 0;
+      }
+
+      main {
+        width: min(1080px, calc(100% - 32px));
+        margin: 40px auto;
+      }
+
+      .layout {
+        display: grid;
+        grid-template-columns: minmax(320px, 420px) minmax(260px, 1fr);
+        gap: 32px;
+        align-items: start;
+      }
+
+      .eyebrow {
+        margin: 0 0 10px;
+        color: #5273a6;
+        font-size: 0.85rem;
+        font-weight: 700;
+        letter-spacing: 0;
+        text-transform: uppercase;
+      }
+
+      h1 {
+        margin: 0 0 14px;
+        font-size: clamp(2rem, 4vw, 3.25rem);
+        line-height: 1.02;
+      }
+
+      .panel {
+        padding: 24px;
+        border: 1px solid #d7dfeb;
+        border-radius: 8px;
+        background: #ffffff;
+        box-shadow: 0 16px 50px rgb(17 24 39 / 8%);
+      }
+
+      .demo-form {
+        width: 100%;
+      }
+
+      .field-label {
+        display: inline-block;
+        margin: 0 0 8px;
+        color: #33445f;
+        font-size: 0.92rem;
+        font-weight: 600;
+      }
+
+      .combobox-root {
+        position: relative;
+      }
+
+      .trigger {
+        display: inline-flex;
+        width: 100%;
+        align-items: center;
+        justify-content: space-between;
+        gap: 12px;
+        min-height: 48px;
+        padding: 0 16px;
+        border: 1px solid #cad4e4;
+        border-radius: 8px;
+        background: #ffffff;
+        color: #182338;
+        font: inherit;
+        cursor: pointer;
+        transition:
+          border-color 160ms ease,
+          box-shadow 160ms ease,
+          opacity 160ms ease;
+      }
+
+      .trigger:hover {
+        border-color: #96abd0;
+      }
+
+      .trigger:focus-visible,
+      .combobox-search:focus-visible,
+      .combobox-option:focus-visible {
+        outline: 2px solid #4b75ff;
+        outline-offset: 2px;
+      }
+
+      .trigger-value {
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+      }
+
+      .chevron {
+        width: 20px;
+        height: 20px;
+        flex: 0 0 auto;
+        color: #63728d;
+      }
+
+      .dropdown {
+        position: absolute;
+        left: 0;
+        right: 0;
+        top: calc(100% + 8px);
+        z-index: 10;
+        overflow: hidden;
+        border: 1px solid #cad4e4;
+        border-radius: 8px;
+        background: #ffffff;
+        box-shadow: 0 18px 36px rgb(17 24 39 / 14%);
+      }
+
+      .search-wrap {
+        position: relative;
+        border-bottom: 1px solid #e5ebf4;
+      }
+
+      .search-icon {
+        position: absolute;
+        left: 14px;
+        top: 50%;
+        width: 18px;
+        height: 18px;
+        color: #7c8aa0;
+        transform: translateY(-50%);
+      }
+
+      .combobox-search {
+        width: 100%;
+        padding: 12px 14px 12px 42px;
+        border: 0;
+        border-radius: 0;
+        font: inherit;
+      }
+
+      .options-viewport {
+        height: 220px;
+        overflow-y: auto;
+      }
+
+      .empty-state {
+        padding: 14px 16px;
+        color: #6e7d95;
+        font-size: 0.92rem;
+      }
+
+      .combobox-option {
+        display: flex;
+        width: 100%;
+        align-items: center;
+        justify-content: space-between;
+        gap: 12px;
+        padding: 0 16px;
+        border: 0;
+        border-bottom: 1px solid #eef2f8;
+        background: #ffffff;
+        color: #172033;
+        font: inherit;
+        text-align: left;
+        cursor: pointer;
+      }
+
+      .combobox-option:hover {
+        background: #f7faff;
+      }
+
+      .combobox-option.is-selected {
+        font-weight: 700;
+      }
+
+      .checkmark {
+        width: 16px;
+        height: 16px;
+        flex: 0 0 auto;
+        color: #2d5bff;
+      }
+
+      .sr-only {
+        position: absolute;
+        width: 1px;
+        height: 1px;
+        padding: 0;
+        margin: -1px;
+        overflow: hidden;
+        clip: rect(0, 0, 0, 0);
+        white-space: nowrap;
+        border: 0;
+      }
+
+      .selection-summary {
+        margin: 0 0 14px;
+        color: #60708a;
+        font-size: 0.92rem;
+      }
+
+      @media (max-width: 860px) {
+        main {
+          width: min(100% - 20px, 1080px);
+          margin: 20px auto;
+        }
+
+        .layout {
+          grid-template-columns: 1fr;
+          gap: 20px;
+        }
+      }
+    </style>
+    <script defer src="../dist/cdn.js"></script>
+    <script
+      defer
+      src="https://unpkg.com/@alpinejs/focus@3.x.x/dist/cdn.min.js"
+    ></script>
+    <script
+      defer
+      src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"
+    ></script>
+    <script>
+      function createComboboxDemo() {
+        return {
+          itemHeight: 44,
+          allOptions: Array.from({ length: 50000 }, (_, index) => ({
+            id: index + 1,
+            label: `Customer ${String(index + 1).padStart(5, "0")}`,
+            value: `cust-${String(index + 1)}`,
+          })),
+          options: [],
+          isOpen: false,
+          openedWithKeyboard: false,
+          selectedOption: null,
+          activeIndex: -1,
+          isPrintableKey(event) {
+            return /^[a-z0-9]$/i.test(event.key);
+          },
+          isOptionSelected(option) {
+            return (
+              this.selectedOption && this.selectedOption.value === option.value
+            );
+          },
+          setSelectedOption(option) {
+            this.selectedOption = option;
+            this.$refs.hiddenTextField.value = option.value;
+            this.closeList(true);
+          },
+          getFilteredOptions(query) {
+            this.options = this.allOptions.filter((option) =>
+              option.label.toLowerCase().includes(query.toLowerCase()),
+            );
+            this.syncActiveIndex();
+
+            this.$nextTick(() => {
+              if (this.$refs.optionsViewport) {
+                this.$refs.optionsViewport.scrollTop = 0;
+              }
+            });
+          },
+          handleKeydownOnOptions(event) {
+            if (!this.isOpen || !this.$refs.searchField) return;
+            if (event.target === this.$refs.searchField) return;
+
+            if (this.isPrintableKey(event)) {
+              event.preventDefault();
+              this.$refs.searchField.focus();
+              this.$refs.searchField.value += event.key;
+              this.getFilteredOptions(this.$refs.searchField.value);
+            }
+
+            if (event.key === "Backspace") {
+              event.preventDefault();
+              this.$refs.searchField.focus();
+              this.$refs.searchField.value = this.$refs.searchField.value.slice(
+                0,
+                -1,
+              );
+              this.getFilteredOptions(this.$refs.searchField.value);
+            }
+          },
+          openList(fromKeyboard = false) {
+            this.isOpen = true;
+            this.openedWithKeyboard = fromKeyboard;
+            this.getFilteredOptions(this.$refs.searchField?.value || "");
+
+            this.$nextTick(() => {
+              this.$refs.searchField.focus();
+            });
+          },
+          closeList(restoreFocus = false) {
+            this.isOpen = false;
+            this.openedWithKeyboard = false;
+            this.activeIndex = -1;
+
+            if (restoreFocus) {
+              this.$nextTick(() => {
+                this.$refs.trigger.focus();
+              });
+            }
+          },
+          syncActiveIndex() {
+            const selectedIndex = this.selectedOption
+              ? this.options.findIndex(
+                  (option) => option.value === this.selectedOption.value,
+                )
+              : -1;
+
+            this.activeIndex =
+              selectedIndex >= 0
+                ? selectedIndex
+                : this.options.length > 0
+                  ? 0
+                  : -1;
+          },
+          focusOptionByOffset(direction) {
+            if (!this.options.length) return;
+
+            if (this.activeIndex < 0) {
+              this.syncActiveIndex();
+            } else {
+              this.activeIndex = Math.min(
+                Math.max(this.activeIndex + direction, 0),
+                this.options.length - 1,
+              );
+            }
+
+            this.ensureActiveOptionVisible();
+
+            this.$nextTick(() => {
+              this.$el.querySelector(`#option-${this.activeIndex}`)?.focus();
+            });
+          },
+          ensureActiveOptionVisible() {
+            if (!this.$refs.optionsViewport || this.activeIndex < 0) return;
+
+            const rowTop = this.activeIndex * this.itemHeight;
+            const rowBottom = rowTop + this.itemHeight;
+            const viewportTop = this.$refs.optionsViewport.scrollTop;
+            const viewportBottom =
+              viewportTop + this.$refs.optionsViewport.clientHeight;
+
+            if (rowTop < viewportTop) {
+              this.$refs.optionsViewport.scrollTop = rowTop;
+            } else if (rowBottom > viewportBottom) {
+              this.$refs.optionsViewport.scrollTop =
+                rowBottom - this.$refs.optionsViewport.clientHeight;
+            }
+          },
+          setActiveIndex(index) {
+            this.activeIndex = index;
+          },
+        };
+      }
+    </script>
+  </head>
+  <body>
+    <main>
+      <p class="eyebrow">Demo</p>
+      <h1>Virtualized Combobox</h1>
+
+      <div class="layout">
+        <section class="panel">
+          <div
+            x-data="createComboboxDemo()"
+            class="demo-form"
+            x-on:keydown="handleKeydownOnOptions($event)"
+            x-on:keydown.esc.window="closeList(true)"
+            x-init="options = allOptions"
+          >
+            <p class="selection-summary">
+              <span x-text="`${options.length} visible matches`"></span>
+              <span
+                x-show="selectedOption"
+                x-text="` | Selected: ${selectedOption?.value ?? 'None'}`"
+              ></span>
+            </p>
+            <label for="customer_name" class="field-label">Options</label>
+
+            <div class="combobox-root">
+              <button
+                x-ref="trigger"
+                type="button"
+                class="trigger"
+                role="combobox"
+                aria-controls="optionsList"
+                aria-haspopup="listbox"
+                x-on:click="isOpen ? closeList() : openList(false)"
+                x-on:keydown.down.prevent="openList(true)"
+                x-on:keydown.enter.prevent="openList(true)"
+                x-on:keydown.space.prevent="openList(true)"
+                x-bind:aria-expanded="isOpen || openedWithKeyboard"
+                x-bind:aria-label="selectedOption ? selectedOption.value : 'Please Select'"
+              >
+                <span
+                  class="trigger-value"
+                  x-text="selectedOption ? selectedOption.value : 'Please Select'"
+                ></span>
+
+                <svg
+                  class="chevron"
+                  xmlns="http://www.w3.org/2000/svg"
+                  viewBox="0 0 20 20"
+                  fill="currentColor"
+                  aria-hidden="true"
+                >
+                  <path
+                    fill-rule="evenodd"
+                    d="M5.22 8.22a.75.75 0 0 1 1.06 0L10 11.94l3.72-3.72a.75.75 0 1 1 1.06 1.06l-4.25 4.25a.75.75 0 0 1-1.06 0L5.22 9.28a.75.75 0 0 1 0-1.06Z"
+                    clip-rule="evenodd"
+                  />
+                </svg>
+              </button>
+
+              <input
+                id="customer_name"
+                name="customer_name"
+                x-ref="hiddenTextField"
+                hidden=""
+              />
+
+              <div
+                x-cloak
+                x-show="isOpen || openedWithKeyboard"
+                x-transition
+                id="optionsList"
+                class="dropdown"
+                x-on:click.outside="closeList()"
+                x-trap="openedWithKeyboard"
+              >
+                <div class="search-wrap">
+                  <svg
+                    class="search-icon"
+                    xmlns="http://www.w3.org/2000/svg"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                    fill="none"
+                    stroke-width="1.5"
+                    aria-hidden="true"
+                  >
+                    <path
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      d="m21 21-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.607 10.607Z"
+                    />
+                  </svg>
+
+                  <input
+                    type="text"
+                    class="combobox-search"
+                    name="searchField"
+                    aria-label="Search"
+                    x-on:input="getFilteredOptions($el.value)"
+                    x-on:keydown.down.prevent="focusOptionByOffset(1)"
+                    x-on:keydown.up.prevent="focusOptionByOffset(-1)"
+                    x-ref="searchField"
+                    placeholder="Search"
+                  />
+                </div>
+
+                <div
+                  x-show="options.length === 0"
+                  class="empty-state"
+                  x-text="'No matches found'"
+                ></div>
+
+                <div
+                  x-show="options.length > 0"
+                  x-ref="optionsViewport"
+                  class="options-viewport"
+                  role="listbox"
+                  aria-label="Customer Names"
+                  x-virtual-list="{
+                    items: options,
+                    itemHeight: itemHeight,
+                    overscan: 6,
+                    as: 'item',
+                    key: 'value'
+                  }"
+                >
+                  <template>
+                    <button
+                      type="button"
+                      class="combobox-option"
+                      role="option"
+                      x-on:click="setSelectedOption(item)"
+                      x-on:keydown.enter.prevent="setSelectedOption(item)"
+                      x-on:keydown.down.prevent="focusOptionByOffset(1)"
+                      x-on:keydown.up.prevent="focusOptionByOffset(-1)"
+                      x-on:focus="setActiveIndex(index)"
+                      x-bind:id="'option-' + index"
+                      x-bind:tabindex="activeIndex === index ? 0 : -1"
+                      x-bind:aria-selected="isOptionSelected(item)"
+                      x-bind:class="isOptionSelected(item) ? 'is-selected' : ''"
+                    >
+                      <span x-text="item.label"></span>
+                      <span
+                        class="sr-only"
+                        x-text="isOptionSelected(item) ? 'selected' : ''"
+                      ></span>
+                      <svg
+                        x-cloak
+                        x-show="isOptionSelected(item)"
+                        class="checkmark"
+                        xmlns="http://www.w3.org/2000/svg"
+                        viewBox="0 0 24 24"
+                        stroke="currentColor"
+                        fill="none"
+                        stroke-width="2"
+                        aria-hidden="true"
+                      >
+                        <path
+                          stroke-linecap="round"
+                          stroke-linejoin="round"
+                          d="m4.5 12.75 6 6 9-13.5"
+                        />
+                      </svg>
+                    </button>
+                  </template>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+      </div>
+    </main>
+  </body>
+</html>
