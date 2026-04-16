@@ -1,16 +1,14 @@
-import test from "node:test";
-import assert from "node:assert/strict";
 import { getVirtualRange, normalizeVirtualListOptions } from "../src/core.js";
 
 test("normalizes array shorthand into list options", () => {
   const items = ["a", "b"];
   const options = normalizeVirtualListOptions(items);
 
-  assert.equal(options.items, items);
-  assert.equal(options.itemHeight, 40);
-  assert.equal(options.overscan, 5);
-  assert.equal(options.as, "item");
-  assert.equal(options.indexAs, "index");
+  expect(options.items).toBe(items);
+  expect(options.itemHeight).toBe(40);
+  expect(options.overscan).toBe(5);
+  expect(options.as).toBe("item");
+  expect(options.indexAs).toBe("index");
 });
 
 test("calculates a buffered visible range", () => {
@@ -22,7 +20,7 @@ test("calculates a buffered visible range", () => {
     overscan: 2,
   });
 
-  assert.deepEqual(range, {
+  expect(range).toEqual({
     start: 8,
     end: 17,
     visibleStart: 10,
@@ -41,7 +39,7 @@ test("clamps the range near the end of the list", () => {
     overscan: 3,
   });
 
-  assert.equal(range.start, 6);
-  assert.equal(range.end, 10);
-  assert.equal(range.totalHeight, 300);
+  expect(range.start).toBe(6);
+  expect(range.end).toBe(10);
+  expect(range.totalHeight).toBe(300);
 });

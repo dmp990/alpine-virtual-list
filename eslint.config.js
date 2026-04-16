@@ -18,6 +18,7 @@ export default [
     files: ["test/**/*.js", "eslint.config.js"],
     languageOptions: {
       globals: {
+        ...globals.jest,
         ...globals.node,
       },
     },
