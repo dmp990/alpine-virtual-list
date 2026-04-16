@@ -167,7 +167,9 @@ function createRecord(Alpine, template, options, item, index) {
   node.style.boxSizing = "border-box";
   node.style.willChange = "transform";
 
-  Alpine.addScopeToNode(node, scope);
+  // Inherit the surrounding Alpine scope from the original template location
+  // so virtualized rows can still see parent component state and methods.
+  Alpine.addScopeToNode(node, scope, template);
   Alpine.initTree(node);
 
   return { node, scope };

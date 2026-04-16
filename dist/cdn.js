@@ -222,7 +222,7 @@
     node.style.boxSizing = "border-box";
     node.style.willChange = "transform";
 
-    Alpine.addScopeToNode(node, scope);
+    Alpine.addScopeToNode(node, scope, template);
     Alpine.initTree(node);
 
     return { node, scope };
