@@ -1,6 +1,6 @@
 # Alpine Virtual List
 
-[![Unit Tests](https://github.com/dmp990/alpine-virtual-list/actions/workflows/unit-tests.yml/badge.svg?branch=main)](https://github.com/dmp990/alpine-virtual-list/actions/workflows/unit-tests.yml)
+[![CI](https://github.com/dmp990/alpine-virtual-list/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/dmp990/alpine-virtual-list/actions/workflows/ci.yml)
 
 An Alpine.js plugin for rendering large, fixed-height lists with a small DOM window.
 
