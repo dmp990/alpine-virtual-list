@@ -1,6 +1,6 @@
 {
   "name": "alpine-virtual-list",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "An Alpine.js plugin for rendering large lists with a tiny virtualized window.",
   "repository": {
     "type": "git",
